@@ -147,10 +147,11 @@ body::before {
         .flight-info { background: #f1f8ff; padding: 12px; border-radius: 12px; font-size: 0.9rem; border: 1px solid #d0e4f5; }
         .close-btn { display: block; margin: 20px auto 0; padding: 12px 30px; background: #eee; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; }
         .submit-vote { width: 100%; background: var(--secondary); color: white; border: none; padding: 15px; border-radius: 30px; margin-top: 20px; font-weight: bold; cursor: pointer; }
-        /* RECAP VOTO */
-        .recap-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee;}
-        .submit-vote { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 30px; margin-top: 20px; font-weight: bold; cursor: pointer; }
-    </style>
+button:hover {
+    background-color: #ff6b81; /* Un rosso un po' più chiaro */
+    transform: scale(1.05);    /* Si ingrandisce leggermente */
+}
+      </style>
 </head>
 <body>
 <nav class="navbar">
@@ -425,10 +426,21 @@ di sabbia dorata, con ombrelloni, lettini e teli mare a disposizione. La balneaz
     </div>
 </div>
 
-<div style="text-align: center; margin-top: 50px; padding-bottom: 20px;">
-    <span style="font-size: 9px; color: rgba(0,0,0,0.2); cursor: pointer; user-select: none;" onclick="openModal('easterEggModal')">
-        non cliccare qui
-    </span>
+<div style="text-align: center; margin: 50px 0; padding-bottom: 30px;">
+    <button onclick="attivaEasterEgg()" style="
+        background-color: #ff4757; 
+        color: white; 
+        border: none; 
+        padding: 12px 25px; 
+        border-radius: 30px; 
+        font-weight: bold; 
+        text-transform: uppercase; 
+        cursor: pointer; 
+        box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+        transition: 0.3s;
+        font-family: inherit;">
+        Non cliccare qui!
+    </button>
 </div>
     </div>
    <script src="https://unpkg.com/@formspree/ajax@1"></script>
