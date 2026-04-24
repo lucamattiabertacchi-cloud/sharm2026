@@ -157,7 +157,7 @@ body::before {
     <div class="burger-menu" onclick="toggleSidebar()">☰</div>
     <div class="nav-title">🌴 SHARM El SHEIK 2026 🌴</div>
     <button class="nav-vote-btn" onclick="openModal('voteModal')">Recap 🗳️</button>
-    <p style="text-align: center; font-size: 10px; color: rgba(0,0,0,0.2); cursor: pointer;" onclick="easterEgg()">non cliccare qui</p>
+    
 </nav>
 
 <div id="sideMenu" class="sidebar">
@@ -412,7 +412,24 @@ di sabbia dorata, con ombrelloni, lettini e teli mare a disposizione. La balneaz
                     <b>Andata:</b> EasyJet (MXP) 🛫 07:25 ➔ 🛬 12:40<br>
                     <b>Ritorno:</b> WizzAir (MXP) 🛫 22:00 ➔ 🛬 01:35    
                 </div> -->
+    <div class="modal-overlay" id="easterEggModal" onclick="closeModalForce('easterEggModal')">
+    <div class="modal-content" onclick="event.stopPropagation()" style="border-top-color: #e74c3c; text-align: center;">
+        <img src="ribelle.jpg" alt="Easter Egg" style="width: 100%; border-radius: 15px; margin-bottom: 15px; border: 2px solid #eee;">
+        
+        <h2 style="color: #e74c3c; margin-bottom: 10px;">MA ALLORA SEI UN RIBELLE!</h2>
+        <p style="font-size: 1.1rem; line-height: 1.4; color: #333;">
+            Sappi che chi clicca qui paga da bere a tutti a Naama Bay! 🍻
+        </p>
+        
+        <button class="close-btn" onclick="closeModalForce('easterEggModal')">OK, OFFRO IO! 😂</button>
+    </div>
+</div>
 
+<div style="text-align: center; margin-top: 50px; padding-bottom: 20px;">
+    <span style="font-size: 9px; color: rgba(0,0,0,0.2); cursor: pointer; user-select: none;" onclick="openModal('easterEggModal')">
+        non cliccare qui
+    </span>
+</div>
     </div>
    <script src="https://unpkg.com/@formspree/ajax@1"></script>
     <script>
@@ -458,6 +475,9 @@ di sabbia dorata, con ombrelloni, lettini e teli mare a disposizione. La balneaz
             overlay.classList.toggle('active');
             document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : 'auto';
         }
+       function attivaEasterEgg() {
+        openModal('easterEggModal');
+    }
     </script>
 </body>
 </html>
