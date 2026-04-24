@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHARM EL SCICCO 2K26</title>
+      <style>
+        :root {
+            --primary: #268c04;
+            --secondary: #3498db;
+            --accent: #f1c40f;
+            --bg: #f4f7f6;
+            --nav-height: 70px;
+        }
+
+         body { 
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+    margin: 0; 
+    padding: 20px; 
+    padding-top: calc(var(--nav-height) + 30px);
+    color: #333;
+    /* SFONDO GIF DEL MARE */
+    background: url('sea_BRsy3ICa.gif') no-repeat center center fixed;
+    background-size: cover;
+}
+
+/* Overlay per rendere lo sfondo meno fastidioso alla vista */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.25); /* Effetto vetro appannato chiaro */
+    z-index: -1;
+}
+
+        /* --- NAVBAR --- */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--nav-height);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .burger-menu { font-size: 1.8rem; cursor: pointer; color: var(--primary); width: 40px; }
+        .nav-title { font-weight: bold; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; font-size: 2rem; text-align: center; flex-grow: 1; }
+        
+        .nav-vote-btn {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        /* --- SIDEBAR (BARRA LATERALE) --- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px; /* Inizialmente nascosta */
+            width: 280px;
+            height: 100%;
+            background: white;
+            z-index: 2000;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            padding: 30px 20px;
+            box-sizing: border-box;
+        }
+
+        .sidebar.open { left: 0; } /* Quando aggiungiamo la classe 'open' con JS */
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            z-index: 1500;
+            backdrop-filter: blur(2px);
+        }
+        .sidebar-overlay.active { display: block; }
+
+        .sidebar h3 { color: var(--primary); border-bottom: 2px solid var(--bg); padding-bottom: 10px; margin: 0; }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
+        .sidebar-nav a { text-decoration: none; color: #333; font-weight: bold; font-size: 1.1rem; padding: 10px; border-radius: 10px; transition: 0.3s; }
+        .sidebar-nav a:hover { background: var(--bg); color: var(--primary); }
+
+        /* --- GRIGLIA E CARD --- */
+        .container { max-width: 1100px; margin: auto; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+
+        @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+
+        .preview-card {
+    background: rgba(255, 255, 255, 0.9); /* Sfondo bianco semi-trasparente */
+    backdrop-filter: blur(5px);
+    border-radius: 25px;
+    padding: 25px;
+    text-align: center;
+    
+    /* BORDO NERO */
+    border: 2px solid var(--primary); 
+    border-top: 8px solid var(--primary); /* Mantengo il tocco verde sopra */
+    
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: 0.3s;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.preview-card:hover {
+    transform: translateY(-10px);
+    background: white;
+    border-color: var(--primary); /* Il bordo diventa leggermente più chiaro al passaggio */
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+}
+        .preview-card .price { font-size: 2.5rem; font-weight: bold; color: var(--primary); margin: 10px 0; }
+        .preview-card .badge { background: var(--accent); font-size: 0.75rem; padding: 6px 12px; border-radius: 15px; font-weight: bold; margin-bottom: 15px; }
+
+        /* MODALI DETTAGLI */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            display: none; justify-content: center; align-items: center; z-index: 3000;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: white; width: 90%; max-width: 450px; border-radius: 25px; padding: 30px;
+            border-top: 12px solid var(--secondary); max-height: 90vh; overflow-y: auto;
+        }
+        .section-title { font-weight: bold; color: var(--secondary); border-bottom: 2px solid #eee; margin: 20px 0 10px; display: block; text-transform: uppercase; font-size: 0.85rem; text-align: center; }
+        .flight-info { background: #f1f8ff; padding: 12px; border-radius: 12px; font-size: 0.9rem; border: 1px solid #d0e4f5; }
+        .close-btn { display: block; margin: 20px auto 0; padding: 12px 30px; background: #eee; border: none; border-radius: 25px; font-weight: bold; cursor: pointer; }
+        .submit-vote { width: 100%; background: var(--secondary); color: white; border: none; padding: 15px; border-radius: 30px; margin-top: 20px; font-weight: bold; cursor: pointer; }
+        /* RECAP VOTO */
+        .recap-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #eee;}
+        .submit-vote { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 30px; margin-top: 20px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="burger-menu" onclick="toggleSidebar()">☰</div>
+    <div class="nav-title">🌴 SHARM El SHEIK 2026 🌴</div>
+    <button class="nav-vote-btn" onclick="openModal('voteModal')">Recap 🗳️</button>
+</nav>
+
+<div id="sideMenu" class="sidebar">
+    <h3>MENU</h3>
+    <nav class="sidebar-nav">
+        <a href="documenti.html">📑 Documenti & Info</a>
+        <a href="escursioni.html">🐪 Escursioni & Tour</a>
+        <a href="lista-bagagli.html">🧳 Cosa portare</a>
+        <a href="#" onclick="toggleSidebar(); openModal('questionModal')">🙋‍♂️ Fai una domanda</a>
+    </nav>
+</div>
+<div class="modal-overlay" id="questionModal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2 style="text-align:center; margin-bottom:10px;">🙋‍♂️ HAI DUBBI?</h2>
+        <div id="fs-status">
+            <div data-fs-success style="display:none; color: #268c04; font-weight: bold; text-align: center; padding: 20px;">
+                Domanda inviata! Ti risponderemo al più presto. 🌴
+            </div>
+            <div data-fs-error style="display:none; color: red; text-align: center; padding: 20px;">
+                Ops! Errore nell'invio. Riprova.
+            </div>
+        </div>
+        <form id="questionForm">
+            <p style="text-align:center; font-size: 0.9rem; color: #666; margin-bottom: 20px;">Scrivi qui la tua domanda (e il tuo nome!).</p>
+            <textarea name="messaggio" id="userQuestion" data-fs-field required
+                style="width: 100%; height: 120px; border-radius: 15px; border: 2px solid #000; padding: 15px; font-family: inherit; box-sizing: border-box; resize: none;" 
+                placeholder="Esempio: Ciao sono Marco, l'opzione 1 ha il Wi-Fi?"></textarea>
+            <button type="submit" data-fs-submit-btn class="submit-vote">INVIA DOMANDA ✈️</button>
+        </form>
+        <button class="close-btn" onclick="closeModalForce('questionModal')">CHIUDI</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="voteModal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <h2 style="text-align:center; margin-bottom:10px;">🗳️ RECAP OPZIONI</h2>
+        <div style="font-size: 0.9rem; line-height: 1.6;">
+            <p>1. <b>Dreams</b> (Unica) - €482</p>
+            <p>2. <b>Continental</b> (Unica) - €508</p>
+            <p>3. <b>V Hotel</b> (Unica) - €666</p>
+            <p>4. <b>Sea Life</b> (2 Camere) - €714</p>
+            <p>5. <b>Dreams</b> (2 Camere) - €475</p>
+            <p>6. <b>Continental</b> (2 Camere) - €483</p>
+        </div>
+        <button class="submit-vote" onclick="closeModalForce('voteModal'); openModal('questionModal')">HAI DOMANDE? CLICCA QUI</button>
+        <button class="close-btn" onclick="closeModalForce('voteModal')">CHIUDI</button>
+    </div>
+</div>
+<div id="sideOverlay" class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="container">
+        <div class="grid">
+            <div class="preview-card" onclick="openModal('modal1')">
+                <span class="badge">Periodo: 24 GIUGNO - 29 GIUGNO</span>
+                <h2>OPZIONE 1</h2>
+                <div class="price">€ 482</div>
+                <p style="font-size: 0.8rem; color: #666;">Clicca per i dettagli</p>
+            </div>
+
+            <div class="preview-card" onclick="openModal('modal2')">
+                <span class="badge">Periodo: 24 GIUGNO - 29 GIUGNO</span>
+                <h2>OPZIONE 2</h2>
+                <div class="price">€ 508</div>
+                <p style="font-size: 0.8rem; color: #666;">Clicca per i dettagli</p>
+            </div>
+
+            <div class="preview-card" onclick="openModal('modal3')">
+                <span class="badge">Periodo: 24 GIUGNO - 29 GIUGNO</span>
+                <h2>OPZIONE 3</h2>
+                <div class="price">€ 666</div>
+                <p style="font-size: 0.8rem; color: #666;">Clicca per i dettagli</p>
+            </div>
+            <div class="preview-card" onclick="openModal('modal4')">
+                <span class="badge">Periodo 24 GIUGNO - 29 GIUGNO</span>
+                <h2>OPZIONE 4</h2>
+                <div class="price">€ 714</div>
+                <p style="font-size: 0.8rem; color: #666;">Clicca per i dettagli</p>
+            </div>
+            <div class="preview-card" onclick="openModal('modal5')">
+                <span class="badge">Periodo 24 GIUGNO - 29 GIUGNO</span>
+                <h2>OPZIONE 5</h2>
+                <div class="price">€ 475</div>
+                <p style="font-size: 0.8rem; color: #666;">Clicca per i dettagli</p>
+            </div>
+            <div class="preview-card" onclick="openModal('modal6')">
+                <span class="badge">Periodo 24 GIUGNO - 29 GIUGNO</span>
+                <h2>OPZIONE 6</h2>
+                <div class="price">€ 483</div>
+                <p style="font-size: 0.8rem; color: #666;">Clicca per i dettagli</p>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="modal1" onclick="closeModal(event)">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <h2 style="text-align:center; margin:0;">OPZIONE 1 - Camera Unica </h2>
+                
+                <span class="section-title">✈️ Voli (A/R)</span>
+                <div class="flight-info">
+                    <b>Andata:</b> EasyJet (MXP) 🛫 07:25 ➔ 🛬 12:40<br>
+                    <b>Ritorno:</b> WizzAir (MXP) 🛫 22:00 ➔ 🛬 01:35    
+                </div>
+
+                <span class="section-title">🏨 Hotel</span>
+                <ul class="hotel-list">
+                    <li><b>🛎️ Hotel:</b> Sharm Dreams Vacation </li>
+                    <li><b>⭐️ Valutazione: </b> ⭐️⭐️⭐️⭐️⭐️ </li>
+                    <li><b>📍 Posizione:</b> Naama Bay</li>
+                    <li><b>📅 Date:</b> 24 - 29 Giugno</li>
+                    <li><b>🛌 Stanza:</b> 1x Family (4 adulti)</li>
+                    <li><b>🍹 Pacchetto:</b> Hard All Inclusive</li>
+                </ul>
+
+                <span class="section-title">📝 Note</span>
+                <p style="font-size: 0.9rem; font-style: italic;">Bagaglio a mano escluso (~50€). <br><br> Il pacchetto hard all inclusive include colazioni,pranzi,cene,bevande sia nei pasti che presso i bar dentro la struttura. <br> L' hotel è situato a Naama Bay e ha una spiaggia a 800m accanto al Jaz Fayrouz. <br> Con 65€ in più totali è possibile prendere il 4 locali <br>Una navetta gratuita collega l’hotel alla spiaggia ogni 15 minuti, dalle 9 alle 22.
+                </p>
+                
+                <button class="close-btn" onclick="closeModalForce('modal1')">CHIUDI SCHEDA</button>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="modal2" onclick="closeModal(event)">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <h2 style="text-align:center; margin:0;">OPZIONE 2 - Camera Unica</h2>
+                <span class="section-title">✈️ Voli (A/R)</span>
+                <div class="flight-info">
+                    <b>Andata:</b> EasyJet (MXP) 🛫 07:25 ➔ 🛬 12:40<br>
+                    <b>Ritorno:</b> WizzAir (MXP) 🛫 22:00 ➔ 🛬 01:35    
+                </div>
+                <span class="section-title">🏨 Hotel</span>
+                <ul class="hotel-list">
+                    <li><b>🛎️ Hotel:</b> Continental Plaza Resort </li>
+                    <li><b>⭐️ Valutazione: </b> ⭐️⭐️⭐️⭐️ </li>
+                    <li><b>📍 Posizione:</b> Pasha Bay </li>
+                    <li><b>📅 Date:</b> 24 - 29 Giugno</li>
+                    <li><b>🛌 Stanza:</b> 1x Trilocali</li>
+                    <li><b>🍹 Pacchetto:</b> Hard All Inclusive</li>
+                </ul>
+
+                <span class="section-title">📝 Note</span>
+                <p style="font-size: 0.9rem; font-style: italic;">Bagaglio a mano escluso (~50€).<br><br>Gardens Bay (Pasha Bay), direttamente sul mare, 5 km da Naama Bay e dalle sue principali attrazioni, 13 da Sharm Vecchia e dall’aeroporto di Sharm el Sheikh.<br>La spiaggia
+di sabbia dorata, con ombrelloni, lettini e teli mare a disposizione. La balneazione è possibile in ampie piscine naturali (profondità media 1.4m) e un comodo pontile galleggiante (lungo 60m) permette l’accesso anche oltre la barriera corallina (consigliato l’uso di apposite scarpette).<br> la modalità all inclusive include: colazione, pranzo e cena e bar nella struttura</p>
+                
+                <button class="close-btn" onclick="closeModalForce('modal2')">CHIUDI SCHEDA</button>
+            </div>
+        </div>
+        <div class="modal-overlay" id="modal3" onclick="closeModal(event)">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <h2 style="text-align:center; margin:0;">OPZIONE 3 - Camera Unica</h2>
+                <span class="section-title">✈️ Voli (A/R)</span>
+                <div class="flight-info">
+                    <b>Andata:</b> EasyJet (MXP) 🛫 07:25 ➔ 🛬 12:40<br>
+                    <b>Ritorno:</b> WizzAir (MXP) 🛫 22:00 ➔ 🛬 01:35    
+                </div>
+                <span class="section-title">🏨 Hotel</span>
+                <ul class="hotel-list">
+                    <li><b>🛎️ Hotel:</b> V Hotel Beach Resort (Ex Pyramisa)</li>
+                    <li><b>⭐️ Valutazione: </b> ⭐️⭐️⭐️⭐️⭐️ </li>
+                    <li><b>📍 Posizione:</b> Shark Bay </li>
+                    <li><b>📅 Date:</b> 24 - 29 Giugno</li>
+                    <li><b>🛌 Stanza:</b> Family con due stanze</li>
+                    <li><b>🍹 Pacchetto:</b> Hard All Inclusive</li>
+                </ul>
+
+                <span class="section-title">📝 Note</span>
+                <p style="font-size: 0.9rem; font-style: italic;">Bagaglio a mano escluso (~50€). <br><br> Shark Bay, direttamente sulla spiaggia, a 5 km da Soho Square, 7 dall’aeroporto, 13 da Naama bay. <br> La spiaggia
+di sabbia e corallo, è formata da terrazzamenti con diversi accessi sabbiosi con ombrelloni, lettini e teli a disposizione. Due comodi pontili galleggianti (25m circa) permettono la balneazione oltre la barriera corallina (consigliato uso apposite scarpette). La spiaggia è raggiungibile tramite taf-taf che collega internamente la reception e la spiaggia con corse ogni 20 minuti circa. <br> la modalità all inclusive include: colazione, pranzo e cena e bar nella struttura</p>
+                
+                <button class="close-btn" onclick="closeModalForce('modal3')">CHIUDI SCHEDA</button>
+            </div>
+        </div>
+        <div class="modal-overlay" id="modal4" onclick="closeModal(event)">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <h2 style="text-align:center; margin:0;">OPZIONE 4 - Due camere</h2>
+                <span class="section-title">✈️ Voli (A/R)</span>
+                <div class="flight-info">
+                    <b>Andata:</b> EasyJet (MXP) 🛫 07:25 ➔ 🛬 12:40<br>
+                    <b>Ritorno:</b> WizzAir (MXP) 🛫 22:00 ➔ 🛬 01:35    
+                </div>
+                <span class="section-title">🏨 Hotel</span>
+                <ul class="hotel-list">
+                    <li><b>🛎️ Hotel:</b> Charmillion Sea Life Resort</li>
+                    <li><b>⭐️ Valutazione: </b> ⭐️⭐️⭐️⭐️ </li>
+                    <li><b>📍 Posizione:</b> Nabq </li>
+                    <li><b>📅 Date:</b> 24 - 29 Giugno</li>
+                    <li><b>🛌 Stanza:</b> 2x Camera vista piscinsa (+60€ per la vista mare)</li>
+                    <li><b>🍹 Pacchetto:</b> Hard All Inclusive</li>
+                </ul>
+
+                <span class="section-title">📝 Note</span>
+                <p style="font-size: 0.9rem; font-style: italic;">Bagaglio a mano escluso (~50€). <br><br> L'hotel è a 5 km dal La Strada e dall’aeroporto, 20 da Naama Bay (collegata da navetta gratuita una volta al gg). <br> La spiaggia
+di sabbia con una zona corallina e una zona con facile accesso sabbioso e digradante all’interno di ampie piscine naturali (profonde fino a 1,8m), con ombrelloni, lettini e teli mare a disposizione. Accesso garantito oltre la barriera da pontile (147m) davanti alla sezione Club (si raccomandano le apposite scarpette).<br>la modalità all inclusive include: colazione, pranzo e cena e bar nella struttura </p>
+                
+                <button class="close-btn" onclick="closeModalForce('modal4')">CHIUDI SCHEDA</button>
+            </div>
+        </div>
+         <div class="modal-overlay" id="modal5" onclick="closeModal(event)">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <h2 style="text-align:center; margin:0;">OPZIONE 5 - Due Camere </h2>
+                
+                <span class="section-title">✈️ Voli (A/R)</span>
+                <div class="flight-info">
+                    <b>Andata:</b> EasyJet (MXP) 🛫 07:25 ➔ 🛬 12:40<br>
+                    <b>Ritorno:</b> WizzAir (MXP) 🛫 22:00 ➔ 🛬 01:35    
+                </div>
+                <span class="section-title">🏨 Hotel</span>
+                <ul class="hotel-list">
+                    <li><b>🛎️ Hotel:</b> Sharm Dreams Vacation </li>
+                    <li><b>⭐️ Valutazione: </b> ⭐️⭐️⭐️⭐️⭐️ </li>
+                    <li><b>📍 Posizione:</b> Naama Bay</li>
+                    <li><b>📅 Date:</b> 24 - 29 Giugno</li>
+                    <li><b>🛌 Stanza:</b> 2x Studio</li>
+                    <li><b>🍹 Pacchetto:</b> Hard All Inclusive</li>
+                </ul>
+
+                <span class="section-title">📝 Note</span>
+                <p style="font-size: 0.9rem; font-style: italic;">Bagaglio a mano escluso (~50€). <br><br> Il pacchetto hard all inclusive include colazioni,pranzi,cene,bevande sia nei pasti che presso i bar dentro la struttura. <br> L' hotel è situato a Naama Bay e ha una spiaggia a 800m accanto al Jaz Fayrouz. <br> Con 65€ in più totali è possibile prendere il 4 locali <br>Una navetta gratuita collega l’hotel alla spiaggia ogni 15 minuti, dalle 9 alle 22.
+                </p>
+                
+                <button class="close-btn" onclick="closeModalForce('modal5')">CHIUDI SCHEDA</button>
+            </div>
+        </div>
+        <div class="modal-overlay" id="modal6" onclick="closeModal(event)">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <h2 style="text-align:center; margin:0;">OPZIONE 6 - Due Camere </h2>
+                
+                <span class="section-title">✈️ Voli (A/R)</span>
+                <div class="flight-info">
+                    <b>Andata:</b> EasyJet (MXP) 🛫 07:25 ➔ 🛬 12:40<br>
+                    <b>Ritorno:</b> WizzAir (MXP) 🛫 22:00 ➔ 🛬 01:35    
+                </div>
+                <span class="section-title">🏨 Hotel</span>
+                <ul class="hotel-list">
+                    <li><b>🛎️ Hotel:</b> Continental Plaza Resort </li>
+                    <li><b>⭐️ Valutazione: </b> ⭐️⭐️⭐️⭐️ </li>
+                    <li><b>📍 Posizione:</b> Pasha Bay </li>
+                    <li><b>📅 Date:</b> 24 - 29 Giugno</li>
+                    <li><b>🛌 Stanza:</b> 1x Trilocali</li>
+                    <li><b>🍹 Pacchetto:</b> Hard All Inclusive</li>
+                </ul>
+
+                <span class="section-title">📝 Note</span>
+                <p style="font-size: 0.9rem; font-style: italic;">Bagaglio a mano escluso (~50€).<br><br>Gardens Bay (Pasha Bay), direttamente sul mare, 5 km da Naama Bay e dalle sue principali attrazioni, 13 da Sharm Vecchia e dall’aeroporto di Sharm el Sheikh.<br>La spiaggia
+di sabbia dorata, con ombrelloni, lettini e teli mare a disposizione. La balneazione è possibile in ampie piscine naturali (profondità media 1.4m) e un comodo pontile galleggiante (lungo 60m) permette l’accesso anche oltre la barriera corallina (consigliato l’uso di apposite scarpette).<br> la modalità all inclusive include: colazione, pranzo e cena e bar nella struttura</p>
+                
+                <button class="close-btn" onclick="closeModalForce('modal6')">CHIUDI SCHEDA</button>
+            </div>
+        </div>
+                <!-- <div class="flight-info">
+                    <b>Andata:</b> EasyJet (MXP) 🛫 07:25 ➔ 🛬 12:40<br>
+                    <b>Ritorno:</b> Easyjet (MXP) 🛫 13:20 ➔ 🛬 16:55   
+                </div> -->
+                <!-- <div class="flight-info">
+                    <b>Andata:</b> EasyJet (MXP) 🛫 07:25 ➔ 🛬 12:40<br>
+                    <b>Ritorno:</b> WizzAir (MXP) 🛫 22:00 ➔ 🛬 01:35    
+                </div> -->
+
+    </div>
+   <script src="https://unpkg.com/@formspree/ajax@1"></script>
+    <script>
+        // Inizializza Formspree
+        formspree('initForm', { 
+            formElement: '#questionForm', 
+            formId: 'xaqavoqe',
+            onSuccess: function() {
+                document.getElementById('questionForm').style.display = 'none';
+                document.querySelector('[data-fs-success]').style.display = 'block';
+                setTimeout(function() {
+                    closeModalForce('questionModal');
+                    // Reset per prossimo invio
+                    document.getElementById('questionForm').style.display = 'block';
+                    document.querySelector('[data-fs-success]').style.display = 'none';
+                    document.getElementById('userQuestion').value = '';
+                }, 3000);
+            }
+        });
+
+        // Funzioni Modali e Sidebar
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function closeModalForce(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sideMenu');
+            const overlay = document.getElementById('sideOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : 'auto';
+        }
+    </script>
+</body>
+</html>
